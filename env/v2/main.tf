@@ -1,11 +1,30 @@
-module "gcs_db_backup" {
+module "docker_repo" {
+    source                    = "../../modules/artifact_registry"
+    gcp_project_id            = var.gcp_project_id
+    gcp_region                = var.gcp_region
+    docker_repo_name          = var.docker_repo_name
+}
+
+module "db_backup_bucket" {
     source                    = "../../modules/gcs_bucket"
     gcp_project_id            = var.gcp_project_id
-    db_backup_bucket_name     = var.db_backup_bucket_name
-    db_backup_bucket_location = var.db_backup_bucket_location
+    bucket_name               = var.db_backup_bucket_name
+    gcp_region                = var.gcp_region
     storage_class             = "ARCHIVE"
     versioning                = true
     num_newer_versions        = 3
+    cloudfunction_sa          = var.cloudfunction_sa
+}
+
+module "function_bucket" {
+    source                    = "../../modules/gcs_bucket"
+    gcp_project_id            = var.gcp_project_id
+    bucket_name               = var.function_bucket_name
+    gcp_region                = var.gcp_region
+    storage_class             = "STANDARD"
+    versioning                = false
+    num_newer_versions        = 1
+    cloudfunction_sa          = var.cloudfunction_sa
 }
 
 module "cloudsql_postgres" {
@@ -38,7 +57,9 @@ module "cloudrun_api" {
     scaling                           = var.scaling
     startup                           = var.startup
     max_instance_request_concurrency  = var.max_instance_request_concurrency
-    cloudsql_instances                = [module.cloudsql_postgres.postgres_instance_connection_name]
+    db_user                           = var.db_user
+    db_name                           = var.db_name
+    postgres_connection_name          = module.cloudsql_postgres.postgres_instance_connection_name
 }
 
 module "db_backup_pubsub" {
@@ -48,13 +69,15 @@ module "db_backup_pubsub" {
 }
 
 module "db_backup_scheduler" {
-    source              = "../../modules/cloud_scheduler"
-    gcp_project_id      = var.gcp_project_id
-    gcp_region          = var.gcp_region
-    scheduler_job_name  = var.scheduler_job_name
-    schedule            = var.schedule
-    time_zone           = var.time_zone
-    pubsub_topic_id     = module.db_backup_pubsub.topic_id
+    source                      = "../../modules/cloud_scheduler"
+    gcp_project_id              = var.gcp_project_id
+    gcp_region                  = var.gcp_region
+    scheduler_job_name          = var.scheduler_job_name
+    schedule                    = var.schedule
+    time_zone                   = var.time_zone
+    pubsub_topic_id             = module.db_backup_pubsub.topic_id
+    postgres_instance_name      = var.postgres_instance_name
+    cloudfunction_sa            = var.cloudfunction_sa
 }
 
 module "db_backup_function" {
@@ -63,7 +86,7 @@ module "db_backup_function" {
     gcp_project_id       = var.gcp_project_id
     gcp_region           = var.gcp_region
     source_dir           = var.db_backup_function_source_dir
-    function_bucket_name = var.function_bucket_name
+    function_bucket_name = module.function_bucket.bucket_name
     trigger_type         = "pubsub"
     pubsub_topic         = module.db_backup_pubsub.topic_id
     cloudfunction_sa     = var.cloudfunction_sa
@@ -80,6 +103,7 @@ module "db_backup_function" {
     }
 }
 
+/*
 module "check_hauling_summary_function" {
   source               = "../../modules/cloudfunction"
   cloudfunction_name   = var.check_hauling_summary_function_name
@@ -123,3 +147,4 @@ module "html_to_pdf_function" {
     max_request_concurrency  = var.html_to_pdf_function_config.max_request_concurrency
   }
 }
+*/

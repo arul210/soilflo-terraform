@@ -3,3 +3,5 @@
 
 # Local .terraform directory lock file
 .terraform.lock.hcl
+
+terraform.tfstate*

@@ -1,6 +1,6 @@
-resource "google_storage_bucket" "db_backup_bucket" {
-  name     = var.db_backup_bucket_name
-  location = var.db_backup_bucket_location
+resource "google_storage_bucket" "bucket" {
+  name     = "v2-${var.bucket_name}"
+  location = var.gcp_region
   project  = var.gcp_project_id
 
   storage_class = var.storage_class
@@ -19,10 +19,11 @@ resource "google_storage_bucket" "db_backup_bucket" {
       num_newer_versions = var.num_newer_versions
     }
   }
+}
 
-  labels = {
-    env         = "v2"
-    type        = "backup"
-    managed_by  = "terraform"
-  }
+resource "google_storage_bucket_iam_member" "cloudfunction_storage_object_admin" {
+  bucket      = google_storage_bucket.bucket.name
+  role        = "roles/storage.objectAdmin"
+  member      = "serviceAccount:${var.cloudfunction_sa}"
+  depends_on  = [google_storage_bucket.bucket]
 }

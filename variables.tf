@@ -19,11 +19,6 @@ variable "db_backup_bucket_name" {
   type        = string
 }
 
-variable "db_backup_bucket_location" {
-  description = "Location of the database backup GCS bucket"
-  type        = string
-}
-
 variable "postgres_instance_name" {
   description = "Cloud SQL PostgreSQL instance name"
   type        = string
@@ -212,4 +207,9 @@ variable "html_to_pdf_function_config" {
     timeout                 = number
     max_request_concurrency = number
   })
+}
+
+variable "docker_repo_name" {
+  description = "Name of the Docker repository to push images to"
+  type        = string
 }

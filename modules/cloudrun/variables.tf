@@ -64,3 +64,18 @@ variable "cloudsql_instances" {
   type    = list(string)
   default = []
 }
+
+variable "db_user" {
+  description = "PostgreSQL username"
+  type        = string
+}
+
+variable "db_name" {
+  description = "PostgreSQL database name"
+  type        = string
+}
+
+variable "postgres_connection_name" {
+  description = "Cloud SQL connection name for Cloud Run"
+  type        = string
+}

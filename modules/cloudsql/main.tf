@@ -22,7 +22,7 @@ resource "google_sql_database_instance" "postgres_instance" {
     ip_configuration {
       ipv4_enabled    = false
       private_network = var.private_network
-      require_ssl     = true
+      ssl_mode        = "ENCRYPTED_ONLY"
     }
 
     maintenance_window {
@@ -34,9 +34,10 @@ resource "google_sql_database_instance" "postgres_instance" {
     disk_size          = 50
     disk_type          = "PD_SSD"
     activation_policy  = "ALWAYS"
-    data_cache_config {
-      data_cache_enabled = true
-    }
+    # Data caching is not supported. It is only applicable for enterprise plus edition.
+    # data_cache_config {
+    #   data_cache_enabled = true
+    # }
   }
 
   root_password = data.google_secret_manager_secret_version.db_root_password.secret_data

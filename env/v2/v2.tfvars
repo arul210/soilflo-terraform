@@ -1,13 +1,16 @@
 # GCP Project and Region
 gcp_project_id                   = "soilflo-project"
-gcp_region                       = "northamerica-northeast2"
+gcp_region                       = "northamerica-northeast1"
 
 # VPC variables
 vpc_name                         = "platform-vpc"
 
+# Docker Repo variables
+docker_repo_name                 = "core-api-repo"
+
 # GCS bucket variables
-db_backup_bucket_name            = "db-backup"
-db_backup_bucket_location        = "northamerica-northeast2"
+db_backup_bucket_name            = "db-backup-bucket"
+function_bucket_name             = "srccode-bucket"
 
 # CloudSQL variables
 postgres_instance_name           = "postgres-na"
@@ -19,9 +22,9 @@ bigquery_dataset_id              = "core_dataset"
 delete_contents_on_destroy       = false
 
 # Cloud Run variables
-cloudrun_name                    = "core_api"
+cloudrun_name                    = "core-api"
 timeout                          = "240s"
-image                            = ""
+image                            = "northamerica-northeast1-docker.pkg.dev/soilflo-project/core-api-repo/placeholder-api:latest"
 max_instance_request_concurrency = 80
 limits = {
   cpu                            = "8.0"
@@ -29,13 +32,13 @@ limits = {
 }
 scaling = {
   min_instances                  = 1
-  max_instances                  = 20
+  max_instances                  = 10
 }
 startup = {
   port                           = 8080
   initial_delay_seconds          = 0
   timeout_seconds                = 240
-  failure_threshold              = 1
+  failure_threshold              = 3
 }
 
 # Pub/Sub variables
@@ -47,8 +50,6 @@ schedule                         = "0 3 * * *" # 3 AM every day
 time_zone                        = "America/Toronto"
 
 # Cloud Function variables
-function_bucket_name             = "source-cloudfunction"
-
 # DB Backup
 db_backup_cloudfunction_name     = "db-backup-cloudfunction"
 db_backup_function_source_dir    = "./src/db_backup"

@@ -30,8 +30,12 @@ variable "pubsub_topic_id" {
   type        = string
 }
 
-variable "message_payload" {
-  description = "The message payload to send to the Pub/Sub topic"
+variable "postgres_instance_name" {
+  description = "The name of the Cloud SQL instance to back up"
   type        = string
-  default     = "{}"
+}
+
+variable "cloudfunction_sa" {
+  description = "Service account email for the Cloud Function that will use this scheduler job"
+  type        = string
 }

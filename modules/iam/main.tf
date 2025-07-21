@@ -34,7 +34,6 @@ resource "google_project_iam_custom_role" "platform_deployer" {
     "run.services.delete",
     "run.services.get",
     "run.services.update",
-    "run.services.invoke",
 
     # Cloud Functions permissions
     "cloudfunctions.functions.create",
@@ -80,6 +79,36 @@ resource "google_project_iam_binding" "platform_sa_binding" {
   project = var.gcp_project_id
   role    = google_project_iam_custom_role.platform_deployer.id
   members = [
-    "serviceAccount:${var.platform_sa_email}"
+    "serviceAccount:${var.platform_sa}"
   ]
+}
+
+resource "google_project_iam_member" "cloudrun_invoker" {
+  project = var.gcp_project_id
+  role    = "roles/run.invoker"
+  member  = "serviceAccount:${var.cloudrun_sa}"
+}
+
+resource "google_secret_manager_secret_iam_member" "cloudrun_secret_access" {
+  secret_id = "postgresdb-root-password"
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.cloudrun_sa}"
+}
+
+# resource "google_project_iam_member" "cloudfunction_cloudsql_admin" {
+#   project = var.gcp_project_id
+#   role    = "roles/cloudsql.admin"
+#   member  = "serviceAccount:${var.cloudfunction_sa}"
+# }
+
+resource "google_project_iam_member" "cloudfunction_build_roles" {
+  for_each = toset([
+    "roles/cloudbuild.builds.builder",
+    "roles/iam.serviceAccountUser",
+    "roles/storage.objectViewer",
+    "roles/cloudfunctions.developer"
+  ])
+  project = var.gcp_project_id
+  role    = each.value
+  member  = "serviceAccount:${var.cloudfunction_sa}"
 }

@@ -1,9 +1,9 @@
-variable "db_backup_bucket_name" {
+variable "bucket_name" {
   type        = string
   description = "GCS DB Backup bucket name used for database backups"
 }
 
-variable "db_backup_bucket_location" {
+variable "gcp_region" {
   type        = string
   description = "Region where the GCS DB Backup bucket will be created"
 }
@@ -29,4 +29,9 @@ variable "num_newer_versions" {
   type        = number
   description = "Number of newer versions required before deleting an archived object"
   default     = 3
+}
+
+variable "cloudfunction_sa" {
+  type        = string
+  description = "Service account email for the Cloud Function that will use this bucket"
 }

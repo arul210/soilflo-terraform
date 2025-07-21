@@ -3,7 +3,7 @@ module "vpc" {
   vpc_name         = var.vpc_name
   gcp_region       = var.gcp_region
   gcp_project_id   = var.gcp_project_id
-  regions          = ["northamerica-northeast2", "europe-west2", "australia-southeast1"]
+  regions          = ["northamerica-northeast1", "europe-west2", "australia-southeast1"]
   subnet_cidrs     = ["10.10.0.0/16", "10.20.0.0/16", "10.30.0.0/16"]
   depends_on       = [module.apis]
 }
@@ -14,17 +14,39 @@ module "apis" {
   depends_on       = [module.iam]
 }
 
-module "service_account" {
+module "platform_sa" {
   source                = "./modules/service_account"
   gcp_project_id        = var.gcp_project_id
   service_account_name  = "platform-sa"
   display_name          = "Platform Service Account"
 }
 
+module "cloudrun_sa" {
+  source                = "./modules/service_account"
+  gcp_project_id        = var.gcp_project_id
+  service_account_name  = "cloudrun-sa"
+  display_name          = "Cloud Run Service Account"
+}
+
+module "cloudfunction_sa" {
+  source                = "./modules/service_account"
+  gcp_project_id        = var.gcp_project_id
+  service_account_name  = "cloudfunction-sa"
+  display_name          = "Cloud Function Service Account"
+}
+
 module "iam" {
   source                = "./modules/iam"
   gcp_project_id        = var.gcp_project_id
-  platform_sa_email     = module.service_account.platform_sa_email
+  platform_sa           = module.platform_sa.sa_email
+  cloudrun_sa           = module.cloudrun_sa.sa_email
+  cloudfunction_sa      = module.cloudfunction_sa.sa_email
+}
+
+module "private_service_access" {
+  source                = "./modules/private_service_access"
+  gcp_project_id        = var.gcp_project_id
+  vpc_self_link         = module.vpc.network_self_link
 }
 
 module "v2_stack" {
@@ -32,8 +54,9 @@ module "v2_stack" {
   gcp_project_id                    = var.gcp_project_id
   gcp_region                        = var.gcp_region
 
+  docker_repo_name                  = var.docker_repo_name
+   
   db_backup_bucket_name             = var.db_backup_bucket_name
-  db_backup_bucket_location         = var.db_backup_bucket_location
 
   postgres_instance_name            = var.postgres_instance_name
   db_name                           = var.db_name
@@ -44,7 +67,7 @@ module "v2_stack" {
   delete_contents_on_destroy        = var.delete_contents_on_destroy
 
   cloudrun_name                     = var.cloudrun_name
-  cloudrun_sa                       = module.service_account.platform_sa_email
+  cloudrun_sa                       = module.cloudrun_sa.sa_email
   timeout                           = var.timeout
   image                             = var.image
   limits                            = var.limits
@@ -59,7 +82,7 @@ module "v2_stack" {
   time_zone                         = var.time_zone
 
   function_bucket_name              = var.function_bucket_name
-  cloudfunction_sa                  = module.service_account.platform_sa_email
+  cloudfunction_sa                  = module.cloudfunction_sa.sa_email
   
   db_backup_cloudfunction_name      = var.db_backup_cloudfunction_name
   db_backup_function_source_dir     = var.db_backup_function_source_dir
@@ -98,7 +121,6 @@ module "v2_stack" {
     cpu                             = var.html_to_pdf_function_config.cpu
     timeout                         = var.html_to_pdf_function_config.timeout
     max_request_concurrency         = var.html_to_pdf_function_config.max_request_concurrency
-  }                
-
+  }
 }
 

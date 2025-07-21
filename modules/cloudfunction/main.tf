@@ -12,6 +12,7 @@ resource "google_cloudfunctions2_function" "cloudfunction" {
   build_config {
     runtime               = var.config.runtime
     entry_point           = var.config.entry_point
+    service_account       = var.cloudfunction_sa
     source {
       storage_source {
         bucket = var.function_bucket_name
@@ -21,6 +22,7 @@ resource "google_cloudfunctions2_function" "cloudfunction" {
   }
 
   service_config {
+    service_account_email            = var.cloudfunction_sa
     max_instance_count               = var.config.max_instances
     min_instance_count               = var.config.min_instances
     available_memory                 = var.config.memory
@@ -30,7 +32,6 @@ resource "google_cloudfunctions2_function" "cloudfunction" {
     environment_variables            = var.env_vars
     ingress_settings                 = "ALLOW_INTERNAL_ONLY"
     all_traffic_on_latest_revision   = true
-    service_account_email            = var.cloudfunction_sa
   }
 
   dynamic "event_trigger" {

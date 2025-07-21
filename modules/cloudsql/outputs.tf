@@ -12,3 +12,4 @@ output "db_user" {
   description = "The name of the PostgreSQL user"
   value       = google_sql_user.postgres_user.name
 }
+

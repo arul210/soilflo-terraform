@@ -1,4 +1,4 @@
-output "platform_sa_email" {
+output "sa_email" {
   description = "Email of the created service account"
-  value = google_service_account.platform_sa.email
+  value = google_service_account.this.email
 }

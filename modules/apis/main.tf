@@ -8,7 +8,11 @@ resource "google_project_service" "apis" {
     "artifactregistry.googleapis.com",
     "container.googleapis.com",
     "iam.googleapis.com",
-    "secretmanager.googleapis.com"
+    "secretmanager.googleapis.com",
+    "cloudscheduler.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "servicenetworking.googleapis.com",
+    "pubsub.googleapis.com"
   ])
 
   project = var.gcp_project_id
