@@ -12,7 +12,7 @@ resource "google_cloudfunctions2_function" "cloudfunction" {
   build_config {
     runtime               = var.config.runtime
     entry_point           = var.config.entry_point
-    service_account       = var.cloudfunction_sa
+    service_account       = "projects/${var.gcp_project_id}/serviceAccounts/${var.cloudfunction_sa}"
     source {
       storage_source {
         bucket = var.function_bucket_name

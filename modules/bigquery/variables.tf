@@ -18,3 +18,8 @@ variable "delete_contents_on_destroy" {
   description = "Whether to delete contents when destroying the dataset"
   default     = false
 }
+
+variable "cloudrun_sa" {
+  type        = string
+  description = "Service account for Cloud Run to access BigQuery"
+}

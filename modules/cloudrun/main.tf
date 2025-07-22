@@ -84,3 +84,20 @@ resource "google_cloud_run_v2_service" "cloudrun" {
     max_instance_request_concurrency = var.max_instance_request_concurrency
   }
 }
+
+data "google_iam_policy" "cloud_run_invoker_policy" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "principal://iam.googleapis.com/${aws_cognito_user_pool.user_pool.arn}"
+    ]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "auth" {
+  project    = var.gcp_project_id
+  location   = var.gcp_region
+  service    = google_cloud_run_v2_service.cloudrun.name
+
+  policy_data = data.google_iam_policy.cloud_run_invoker_policy.policy_data
+}

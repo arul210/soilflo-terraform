@@ -1,17 +1,11 @@
 variable "gcp_project_id" {
+  description = "The GCP project ID"
   type        = string
-  description = "GCP project ID"
 }
 
 variable "gcp_region" {
-  type        = string
-  description = "Default GCP region"
-  default     = "northamerica-northeast2"
-}
-
-variable "vpc_name" {
-  type        = string
-  description = "Name of the VPC network" 
+  description = "The GCP region"
+  type = string
 }
 
 variable "db_backup_bucket_name" {
@@ -19,30 +13,32 @@ variable "db_backup_bucket_name" {
   type        = string
 }
 
-variable "postgres_instance_name" {
-  description = "Cloud SQL PostgreSQL instance name"
+variable "private_network" {
+  description = "The self-link of the VPC network"
   type        = string
+}
+
+variable "postgres_instance_name" {
+  type = string
 }
 
 variable "db_name" {
-  description = "Name of the PostgreSQL database"
-  type        = string
+  type = string
 }
 
 variable "db_user" {
-  description = "Database username"
-  type        = string
-}
-
-variable "bigquery_dataset_id" {
-  type        = string
-  description = "Dataset ID"
+  type = string
 }
 
 variable "delete_contents_on_destroy" {
   type        = bool
   description = "Whether to delete contents when destroying the dataset"
   default     = false
+}
+
+variable "bigquery_dataset_id" {
+  type        = string
+  description = "Dataset ID"
 }
 
 variable "core_cloudrun_name" {
@@ -102,6 +98,11 @@ variable "max_instance_request_concurrency" {
   default     = 80
 }
 
+variable "cloudrun_sa" {
+  description = "Email of the service account used by Cloud Run"
+  type        = string
+}
+
 variable "db_backup_topic_name" {
   description = "Name of the Pub/Sub topic to trigger the DB backup function"
   type        = string
@@ -159,6 +160,11 @@ variable "function_bucket_name" {
   type        = string
 }
 
+variable "cloudfunction_sa" {
+  description = "Service account email used by Cloud Function"
+  type        = string
+}
+
 variable "db_backup_cloudfunction_name" {
   description = "Name of the Cloud Function that performs DB backup"
   type        = string
@@ -177,36 +183,6 @@ variable "db_backup_function_env_vars" {
 
 variable "db_backup_config" {
   description = "DB Backup Cloud Function configuration parameters"
-  type = object({
-    runtime                 = string
-    entry_point             = string
-    max_instances           = number
-    min_instances           = number
-    memory                  = string
-    cpu                     = number
-    timeout                 = number
-    max_request_concurrency = number
-  })
-}
-
-variable "pgtobq_sync_cloudfunction_name" {
-  description = "Name of the Cloud Function that performs Postgres to Biquery Sync"
-  type        = string
-}
-
-variable "pgtobq_sync_function_source_dir" {
-  description = "Local path to the Postgres to Biquery Sync Cloud Function source code zip files"
-  type        = string
-}
-
-variable "pgtobq_sync_function_env_vars" {
-  description = "Environment variables for Postgres to Biquery Sync Cloud function"
-  type        = map(string)
-  default     = {}
-}
-
-variable "pgtobq_sync_config" {
-  description = "Postgres to Biquery Sync Cloud Function configuration parameters"
   type = object({
     runtime                 = string
     entry_point             = string
@@ -250,23 +226,8 @@ variable "check_hauling_config" {
 }
 
 variable "docker_repo_name" {
-  description = "Name of the Docker repository to push images to"
+  description = "Name of the Docker repository where the image will be pushed"
   type        = string
-}
-
-variable "aws_region_v2" {
-  description = "AWS region for v2"
-  type        = string  
-}
-
-variable "aws_region_au" {
-  description = "AWS region for au"
-  type        = string  
-}
-
-variable "aws_region_uk" {
-  description = "AWS region for uk"
-  type        = string  
 }
 
 variable "environment" {
@@ -280,22 +241,27 @@ variable "domain" {
   default     = "v2.soilflo.com"
 }
 
-variable "cloudflare_api_token" {
-  description = "Cloudflare API token for managing DNS records"
-  type        = string
-}
-
 variable "cloudflare_zone_id" {
   description = "Cloudflare zone ID for the domain"
   type        = string
 }
 
-variable "pods_secondary_ranges" {
-  description = "Map of pods secondary IP CIDR ranges per region"
-  type        = map(string)
+variable "platform_sa" {
+  type        = string
+  description = "The service account used by GKE nodes"
 }
 
-variable "services_secondary_ranges" {
-  description = "Map of services secondary IP CIDR ranges per region"
-  type        = map(string)
+variable "network" {
+  description = "The self-link of the VPC network"
+  type        = string
+}
+
+variable "subnetwork" {
+  description = "The self-link of the VPC subnetwork"
+  type        = string
+}
+
+variable "aws_region_au" {
+  description = "AWS region for au"
+  type        = string  
 }

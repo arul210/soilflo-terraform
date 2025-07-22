@@ -13,6 +13,16 @@ resource "google_compute_subnetwork" "subnets" {
   region          = each.key
   network         = google_compute_network.vpc_network.id
   project         = var.gcp_project_id
+
+  secondary_ip_range {
+    range_name    = "pods-range"
+    ip_cidr_range = var.pods_secondary_ranges[each.key]
+  }
+
+  secondary_ip_range {
+    range_name    = "services-range"
+    ip_cidr_range = var.services_secondary_ranges[each.key]
+  }
 }
 
 resource "google_compute_router" "router" {

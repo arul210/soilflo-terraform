@@ -83,30 +83,38 @@ resource "google_project_iam_binding" "platform_sa_binding" {
   ]
 }
 
-resource "google_project_iam_member" "cloudrun_invoker" {
-  project = var.gcp_project_id
-  role    = "roles/run.invoker"
-  member  = "serviceAccount:${var.cloudrun_sa}"
-}
-
 resource "google_secret_manager_secret_iam_member" "cloudrun_secret_access" {
   secret_id = "postgresdb-root-password"
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${var.cloudrun_sa}"
 }
 
-# resource "google_project_iam_member" "cloudfunction_cloudsql_admin" {
-#   project = var.gcp_project_id
-#   role    = "roles/cloudsql.admin"
-#   member  = "serviceAccount:${var.cloudfunction_sa}"
-# }
+resource "google_project_iam_member" "cloudrun_build_roles" {
+  for_each = toset([
+    "roles/iam.serviceAccountUser",
+    "roles/run.invoker",
+    "roles/secretmanager.secretAccessor",
+    "roles/storage.objectViewer",
+    "roles/bigquery.dataEditor",
+    "roles/artifactregistry.reader",
+    "roles/run.admin"
+  ])
+  project = var.gcp_project_id
+  role    = each.value
+  member  = "serviceAccount:${var.cloudrun_sa}"
+}
 
 resource "google_project_iam_member" "cloudfunction_build_roles" {
   for_each = toset([
     "roles/cloudbuild.builds.builder",
     "roles/iam.serviceAccountUser",
     "roles/storage.objectViewer",
-    "roles/cloudfunctions.developer"
+    "roles/cloudfunctions.developer",
+    "roles/cloudfunctions.invoker",
+    "roles/pubsub.publisher",
+    "roles/pubsub.subscriber",
+    "roles/storage.admin",
+    "roles/artifactregistry.reader"
   ])
   project = var.gcp_project_id
   role    = each.value

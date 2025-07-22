@@ -1,12 +1,12 @@
 # GCP Project and Region
 gcp_project_id                   = "soilflo-terraform"
-gcp_region                       = "northamerica-northeast1"
+gcp_region                       = "europe-west2"
 
 # AWS Region
 aws_region_v2                    = "ca-central-1"
 aws_region_au                    = "ap-southeast-2"
 aws_region_uk                    = "uk-west-2"
-environment                      = "v2"
+environment                      = "uk"
 domain                           = "soilflo.com"
 
 # Cloudflare API Token
@@ -39,10 +39,6 @@ postgres_instance_name           = "postgres-na"
 db_name                          = "core_db"
 db_user                          = "admin"
 
-# BigQuery variables
-bigquery_dataset_id              = "core_dataset"
-delete_contents_on_destroy       = false
-
 # Cloud Run variables
 timeout                          = "240s"
 max_instance_request_concurrency = 80
@@ -63,23 +59,19 @@ startup = {
 
 # core-api
 core_cloudrun_name               = "core-api"
-core_image                       = "northamerica-northeast1-docker.pkg.dev/soilflo-terraform/core-api-repo/placeholder-api:latest"
+core_image                       = "europe-west2-docker.pkg.dev/soilflo-terraform/core-api-repo/placeholder-api:latest"
 
 # html to pdf
 html_to_pdf_cloudrun_name        = "html-to-pdf-api"
-html_to_pdf_image                = "northamerica-northeast1-docker.pkg.dev/soilflo-terraform/core-api-repo/html-to-pdf:latest"
+html_to_pdf_image                = "europe-west2-docker.pkg.dev/soilflo-terraform/core-api-repo/html-to-pdf:latest"
 
 # Pub/Sub variables
 db_backup_topic_name             = "db-backup-trigger"
-pgtobq_sync_topic_name           = "pgtobq-sync-trigger"
 check_hauling_topic_name         = "check-hauling-trigger"
 
 # Scheduler variables
 db_backup_scheduler_job_name     = "db-backup-cronjob"
 db_backup_schedule               = "0 3 * * *" # 3 AM every day
-
-pgtobq_sync_scheduler_job_name   = "pgtobq-sync-cronjob"
-pgtobq_sync_schedule             = "0 2 * * 0" # 2 AM every Sunday
 
 check_hauling_scheduler_job_name = "check-hauling-cronjob"
 check_hauling_schedule           = "0 * * * *" # every hour
@@ -99,21 +91,7 @@ db_backup_config = {
   cpu                            = 8
   timeout                        = 300
   max_request_concurrency        = 80
-}     
-
-# PgToBQ Sync
-pgtobq_sync_cloudfunction_name   = "pgtobq-sync-cloudfunction"
-pgtobq_sync_function_source_dir  = "./src/pgtobq_sync"
-pgtobq_sync_config = {
-  runtime                        = "python312"
-  entry_point                    = "trigger_pgtobq_sync"
-  min_instances                  = 0
-  max_instances                  = 1
-  memory                         = "32Gi"
-  cpu                            = 8
-  timeout                        = 300
-  max_request_concurrency        = 80
-}  
+}      
 
 # Check Hauling Summary 
 check_hauling_function_name       = "check-hauling-cloudfunction"

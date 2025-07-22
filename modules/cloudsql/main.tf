@@ -1,6 +1,6 @@
 data "google_secret_manager_secret_version" "db_root_password" {
   secret  = "postgresdb-root-password"
-  version = "latest"
+  version = "1"
 }
 
 resource "google_sql_database_instance" "postgres_instance" {

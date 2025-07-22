@@ -12,7 +12,8 @@ resource "google_project_service" "apis" {
     "cloudscheduler.googleapis.com",
     "cloudbuild.googleapis.com",
     "servicenetworking.googleapis.com",
-    "pubsub.googleapis.com"
+    "pubsub.googleapis.com",
+    "eventarc.googleapis.com"
   ])
 
   project = var.gcp_project_id
