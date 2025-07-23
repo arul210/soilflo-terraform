@@ -203,48 +203,48 @@ module "html_to_pdf_api" {
     postgres_connection_name          = module.cloudsql_postgres.postgres_instance_connection_name
 }
 
-# module "frontend_static_site" {
-#     source             = "../../modules/aws"
-#     environment        = var.environment
-#     domain             = var.domain
-#     subdomain          = var.environment
-#     cloudflare_zone_id = var.cloudflare_zone_id
-#     providers = {
-#         aws            = aws.v2
-#         cloudflare     = cloudflare
-#     }
-# }
+module "frontend_static_site" {
+    source             = "../../modules/aws"
+    environment        = var.environment
+    domain             = var.domain
+    subdomain          = var.environment
+    cloudflare_zone_id = var.cloudflare_zone_id
+    providers = {
+        aws            = aws.v2
+        cloudflare     = cloudflare
+    }
+}
 
-# module "gke" {
-#   source                   = "../../modules/gke"
-#   project_id               = var.gcp_project_id
-#   cluster_name             = "prod-cluster"
-#   location                 = var.gcp_region
-#   network                  = var.network
-#   subnetwork               = var.subnetwork
-#   master_ipv4_cidr_block   = "172.16.0.0/28"
-#   pods_range               = "pods-range"
-#   services_range           = "services-range"
+module "gke" {
+  source                   = "../../modules/gke"
+  project_id               = var.gcp_project_id
+  cluster_name             = "prod-cluster"
+  location                 = var.gcp_region
+  network                  = var.network
+  subnetwork               = var.subnetwork
+  master_ipv4_cidr_block   = "172.16.0.0/28"
+  pods_range               = "pods-range"
+  services_range           = "services-range"
 
-#   authorized_networks = [
-#     {
-#       cidr_block   = "203.0.113.0/24"
-#       display_name = "Corp Office"
-#     },
-#     {
-#       cidr_block   = "198.51.100.10/32"
-#       display_name = "VPN Admin"
-#     }
-#   ]
+  authorized_networks = [
+    {
+      cidr_block   = "203.0.113.0/24"
+      display_name = "Corp Office"
+    },
+    {
+      cidr_block   = "198.51.100.10/32"
+      display_name = "VPN Admin"
+    }
+  ]
 
-#   machine_type        = "e2-standard-4"
-#   gke_service_account = var.platform_sa
-#   node_count          = 1
-#   min_node_count      = 1
-#   max_node_count      = 3
-#   node_labels         = { env = "prod" }
-#   node_tags           = ["gke-prod"]
-# }
+  machine_type        = "e2-standard-4"
+  gke_service_account = var.platform_sa
+  node_count          = 1
+  min_node_count      = 1
+  max_node_count      = 3
+  node_labels         = { env = "prod" }
+  node_tags           = ["gke-prod"]
+}
 
 module "auth" {
   source                    = "../../modules/cognito"
