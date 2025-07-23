@@ -132,7 +132,7 @@ terraform apply -var-file="v2.tfvars"
 
 --- 
 
-Secrets and credentials are managed securely via **Secret Manager** and **GitHub Secrets**.
+Secrets and credentials are managed securely via **Secret Manager**.
 
 ---
 
