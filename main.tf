@@ -150,3 +150,9 @@ module "v2_stack" {
   depends_on                        = [ module.vpc ]
 }
 
+
+# Write the module "uk_stack" block here
+# It should be similar to the "v2_stack" block but with specific variables for the UK environment (use the env/uk/uk.tfvars).
+
+# Write the module "au_stack" block here
+# It should be similar to the "v2_stack" block but with specific variables for the AU environment (use the env/au/au.tfvars).

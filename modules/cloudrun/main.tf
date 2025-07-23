@@ -89,7 +89,7 @@ data "google_iam_policy" "cloud_run_invoker_policy" {
   binding {
     role = "roles/run.invoker"
     members = [
-      "principal://iam.googleapis.com/${aws_cognito_user_pool.user_pool.arn}"
+      "principal://iam.googleapis.com/${var.cognito_user_pool_arn}"
     ]
   }
 }

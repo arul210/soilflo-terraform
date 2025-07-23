@@ -291,7 +291,7 @@ variable "subnetwork" {
   type        = string
 }
 
-variable "aws_region_v2" {
-  description = "AWS region for v2"
+variable "aws_region_uk" {
+  description = "AWS region for uk"
   type        = string  
 }

@@ -163,3 +163,10 @@ module "frontend_static_site" {
         cloudflare     = cloudflare
     }
 }
+
+module "auth" {
+  source                    = "../../modules/cognito"
+  cloud_run_service_name    = module.cloudrun_api.cloudrun_service_name
+  cognito_domain_prefix     = "myapp-auth-domain"
+  aws_region                = var.aws_region_uk
+}

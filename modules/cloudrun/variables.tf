@@ -79,3 +79,8 @@ variable "postgres_connection_name" {
   description = "Cloud SQL connection name for Cloud Run"
   type        = string
 }
+
+variable "cognito_user_pool_arn" {
+  type    = string
+  default = null
+}
